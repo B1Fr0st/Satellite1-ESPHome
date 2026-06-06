@@ -17,6 +17,7 @@ external_components:
       - satellite1_radar
       - tas2780
       - wyoming_announce
+      - wyoming_satellite
 
   - source:
       # https://github.com/esphome/esphome/pull/12429

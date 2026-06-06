@@ -93,8 +93,7 @@ media_player:
           condition:
             and:
               - switch.is_off: timer_ringing
-              - not:
-                  voice_assistant.is_running:
+              - lambda: return id(wyoming_satellite_id).is_idle();
               - not:
                   media_player.is_announcing: external_media_player
           then:

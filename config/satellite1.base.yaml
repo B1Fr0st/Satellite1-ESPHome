@@ -68,6 +68,8 @@ esphome:
               lambda: return id(init_in_progress);
             then:
               - lambda: id(init_in_progress) = false;
+              # HA never connected — start wake word so voice still works offline.
+              - micro_wake_word.start:
               - script.execute: control_leds
 
 ota:
@@ -87,6 +89,7 @@ packages:
   spk: !include common/speaker.yaml
   mp: !include common/media_player.yaml
   va: !include common/voice_assistant.yaml
+  wyoming_satellite: !include common/wyoming_satellite.yaml
   timer: !include common/timer.yaml
   led_ring: !include common/led_ring.yaml
   mmwave: !include common/mmwave.yaml

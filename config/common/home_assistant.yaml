@@ -2,6 +2,9 @@ api:
   id: api_id
   on_client_connected:
     - lambda: id(init_in_progress) = false;
+    # Start wake word when HA connects. wyoming_satellite.on_idle also restarts
+    # it after each pipeline run, but this covers the first boot.
+    - micro_wake_word.start:
     - script.execute: control_leds
   on_client_disconnected:
     - script.execute: control_leds
