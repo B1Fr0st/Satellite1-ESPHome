@@ -1,0 +1,9 @@
+substitutions:
+  wyoming_announce_port: "10301"
+
+wyoming_announce:
+  id: wyoming_announce_id
+  # Routes through the resampler → mixer → I2S hardware pipeline.
+  # The resampler handles the 24kHz→48kHz conversion from Kokoro TTS.
+  speaker: announcement_resampling_speaker
+  port: ${wyoming_announce_port}
