@@ -1,0 +1,54 @@
+substitutions:
+  # IP or hostname of the 9r9r Wyoming server.
+  wyoming_server_host: "10.0.0.51"
+  wyoming_server_port: "10300"
+
+wyoming_satellite:
+  id: wyoming_satellite_id
+  host: ${wyoming_server_host}
+  port: ${wyoming_server_port}
+  microphone: sat1_mics
+  # Routes TTS audio through the resampler → mixer → I2S pipeline.
+  # The resampler handles 24 kHz Kokoro output → 48 kHz I2S hardware.
+  speaker: announcement_resampling_speaker
+
+  on_listening:
+    # Stop wake word while the pipeline is active to avoid spurious re-triggers.
+    - micro_wake_word.stop:
+    - mixer_speaker.apply_ducking:
+        id: media_mixing_input
+        decibel_reduction: 20
+        duration: 0.0s
+    - lambda: id(voice_assistant_phase) = ${voice_assist_listening_for_command_phase_id};
+    - script.execute: control_leds
+
+  on_thinking:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_thinking_phase_id};
+    - script.execute: control_leds
+
+  on_replying:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
+    - script.execute: control_leds
+    - script.execute: activate_stop_word_once
+
+  on_idle:
+    # Un-duck media audio and restart wake word detection.
+    - mixer_speaker.apply_ducking:
+        id: media_mixing_input
+        decibel_reduction: 0
+        duration: 1.0s
+    - micro_wake_word.start:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+    - script.execute: control_leds
+
+  on_error:
+    - mixer_speaker.apply_ducking:
+        id: media_mixing_input
+        decibel_reduction: 0
+        duration: 0.5s
+    - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
+    - script.execute: control_leds
+    - delay: 1s
+    - micro_wake_word.start:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+    - script.execute: control_leds
