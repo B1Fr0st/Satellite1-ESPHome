@@ -1,6 +1,6 @@
 substitutions:
   # IP or hostname of the 9r9r Wyoming server.
-  wyoming_server_host: "10.0.0.18"
+  wyoming_server_host: "10.0.0.53"
   wyoming_server_port: "10300"
 
 wyoming_satellite:
