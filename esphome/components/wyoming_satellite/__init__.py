@@ -2,7 +2,9 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome import automation
 from esphome.components import microphone, speaker
-from esphome.const import CONF_ID, CONF_HOST, CONF_PORT, CONF_TRIGGER_ID
+from esphome.const import CONF_ID, CONF_PORT, CONF_TRIGGER_ID
+
+CONF_HOST = "host"
 
 DEPENDENCIES = ["network"]
 CODEOWNERS = ["@9r9r"]
