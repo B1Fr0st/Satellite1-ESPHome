@@ -71,6 +71,7 @@ CONFIG_SCHEMA = cv.Schema(
         {cv.GenerateID(): cv.use_id(WyomingSatellite)},
         key=CONF_ID,
     ),
+    synchronous=True,
 )
 async def start_pipeline_action_to_code(config, action_id, template_arg, args):
     parent = await cg.get_variable(config[CONF_ID])

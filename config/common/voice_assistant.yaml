@@ -24,6 +24,29 @@ microphone:
     adc_type: external
     i2s_audio_id: i2s_shared
 
+# voice_assistant is kept solely for its timer infrastructure (voice_assistant::Timer type,
+# id(va).get_timers()). All voice processing is handled by wyoming_satellite instead.
+voice_assistant:
+  id: va
+  microphone:
+    microphone: sat1_mics
+    channels: 0
+  media_player: external_media_player
+  use_wake_word: false
+  noise_suppression_level: 0
+  auto_gain: 0 dbfs
+  volume_multiplier: 1
+  on_timer_finished:
+    - switch.turn_on: timer_ringing
+  on_timer_started:
+    - script.execute: control_leds
+  on_timer_cancelled:
+    - script.execute: control_leds
+  on_timer_updated:
+    - script.execute: control_leds
+  on_timer_tick:
+    - script.execute: control_leds
+
 micro_wake_word:
   id: mww
   models:
