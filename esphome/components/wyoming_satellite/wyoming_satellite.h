@@ -97,7 +97,7 @@ template<typename... Ts>
 class StartPipelineAction : public Action<Ts...> {
  public:
   explicit StartPipelineAction(WyomingSatellite *parent) : parent_(parent) {}
-  void play(Ts... x) override { parent_->start_pipeline(); }
+  void play(const Ts &...x) override { parent_->start_pipeline(); }
 
  private:
   WyomingSatellite *parent_;
