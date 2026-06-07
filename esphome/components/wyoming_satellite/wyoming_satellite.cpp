@@ -1,5 +1,6 @@
 #include "wyoming_satellite.h"
 #include "esphome/core/log.h"
+#include "esphome/components/audio/audio.h"
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -341,7 +342,11 @@ void WyomingSatellite::run_pipeline_() {
       }
 
       if (strstr(hdr, "\"audio-start\"")) {
-        ESP_LOGI(TAG, "TTS audio starting");
+        int tts_rate = find_int(hdr, "rate");
+        if (tts_rate <= 0)
+          tts_rate = 22050;
+        ESP_LOGI(TAG, "TTS audio starting at %d Hz", tts_rate);
+        this->spkr_->set_audio_stream_info(audio::AudioStreamInfo(16, 1, (uint32_t) tts_rate));
         this->spkr_->start();
         spkr_started = true;
         this->pending_callbacks_.fetch_or(CB_REPLYING);
