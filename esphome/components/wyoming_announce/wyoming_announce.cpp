@@ -108,11 +108,15 @@ void WyomingAnnounce::handle_client(int fd) {
 
   while (read_line(fd, line, sizeof(line))) {
     if (strstr(line, "\"audio-start\"")) {
-      int rate = find_int(line, "rate");
-      if (rate <= 0)
-        rate = 22050;
-      ESP_LOGI(TAG, "audio-start rate=%d Hz", rate);
-      this->speaker_->set_audio_stream_info(audio::AudioStreamInfo(16, 1, (uint32_t) rate));
+      int rate     = find_int(line, "rate");
+      int width    = find_int(line, "width");
+      int channels = find_int(line, "channels");
+      if (rate     <= 0) rate     = 24000;
+      if (width    <= 0) width    = 2;
+      if (channels <= 0) channels = 1;
+      ESP_LOGI(TAG, "audio-start rate=%d width=%d ch=%d | %.100s", rate, width, channels, line);
+      this->speaker_->set_audio_stream_info(
+          audio::AudioStreamInfo((uint8_t)(width * 8), (uint8_t)channels, (uint32_t)rate));
       this->speaker_->start();
 
     } else if (strstr(line, "\"audio-chunk\"")) {

@@ -342,11 +342,15 @@ void WyomingSatellite::run_pipeline_() {
       }
 
       if (strstr(hdr, "\"audio-start\"")) {
-        int tts_rate = find_int(hdr, "rate");
-        if (tts_rate <= 0)
-          tts_rate = 22050;
-        ESP_LOGI(TAG, "TTS audio starting at %d Hz", tts_rate);
-        this->spkr_->set_audio_stream_info(audio::AudioStreamInfo(16, 1, (uint32_t) tts_rate));
+        int tts_rate     = find_int(hdr, "rate");
+        int tts_width    = find_int(hdr, "width");
+        int tts_channels = find_int(hdr, "channels");
+        if (tts_rate     <= 0) tts_rate     = 24000;
+        if (tts_width    <= 0) tts_width    = 2;
+        if (tts_channels <= 0) tts_channels = 1;
+        ESP_LOGI(TAG, "TTS audio-start rate=%d width=%d ch=%d | %.100s", tts_rate, tts_width, tts_channels, hdr);
+        this->spkr_->set_audio_stream_info(
+            audio::AudioStreamInfo((uint8_t)(tts_width * 8), (uint8_t)tts_channels, (uint32_t)tts_rate));
         this->spkr_->start();
         spkr_started = true;
         this->pending_callbacks_.fetch_or(CB_REPLYING);
